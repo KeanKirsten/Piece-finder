@@ -1,0 +1,7 @@
+{
+  "name": "shop-the-look",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal outfit-photo shopping prototype. Static page plus one Vercel serverless function.",
+  "engines": { "node": "22.x" }
+}

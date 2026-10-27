@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop the Look</title>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f5f2; --surface:#ffffff; --surface-2:#efeee9; --well:#f1f0ec;
+  --ink:#1a1a17; --muted:#85837a; --line:#e4e2db; --live:#2f8f57; --err:#b8462f;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 10px 30px rgba(0,0,0,.06);
+  --fs:'Mona Sans','Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fs);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea{font:inherit;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 56px}
+
+header{display:flex;align-items:center;gap:12px;padding:18px 0 8px}
+.dot{width:30px;height:30px;border-radius:8px;background:var(--ink);color:var(--bg);display:grid;place-items:center;font-weight:700;font-size:14px;flex:none}
+header h1{margin:0;font-size:16px;font-weight:600;letter-spacing:-.02em}
+header .sub{font-size:12px;color:var(--muted);display:block;font-weight:400}
+.spacer{flex:1}
+.ghost{border:1px solid var(--line);background:var(--surface);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:500;cursor:pointer}
+.ghost:hover{border-color:var(--ink)}
+
+.hero h2{font-size:clamp(28px,6vw,52px);font-weight:340;letter-spacing:-.02em;line-height:1.06;margin:28px 0 12px}
+.hero p{margin:0 0 22px;color:var(--muted);font-size:16px;max-width:520px}
+
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;
+  border:1.5px dashed #cfcdc4;border-radius:18px;background:var(--surface);padding:30px 18px;cursor:pointer;transition:.15s}
+.drop:hover,.drop.drag{border-color:var(--ink);background:var(--surface-2)}
+.drop svg{width:34px;height:34px;opacity:.6}
+.drop b{font-weight:600}
+.drop small{color:var(--muted);font-size:12.5px}
+.drop[hidden]{display:none}
+
+.picked{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:var(--shadow)}
+.picked[hidden]{display:none}
+.picked img{width:96px;height:128px;object-fit:cover;border-radius:12px;background:var(--well);flex:none}
+.picked .side{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px}
+.picked input{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:11px 13px;font-size:16px;outline:none}
+.picked input:focus{border-color:var(--ink)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:20px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.light{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn.light:hover{border-color:var(--ink)}
+
+.status{margin:18px 0 0;font-size:14px;color:var(--muted)}
+.status.err{color:var(--err)}
+.status[hidden]{display:none}
+.dots{display:inline-flex;gap:5px;vertical-align:middle;margin-right:8px}
+.dots i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
+
+.vibe{margin:26px 0 4px;font-size:clamp(18px,3.4vw,24px);font-weight:340;letter-spacing:-.01em;line-height:1.25}
+.vibe small{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);font-weight:600;margin-bottom:5px}
+
+.piece{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:16px;box-shadow:var(--shadow)}
+.ph{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ph h3{margin:0;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.tag{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.q{display:flex;gap:8px;margin:12px 0 4px}
+.q input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:12px;padding:10px 13px;font-size:16px;outline:none}
+.q input:focus{border-color:var(--ink)}
+.stores{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stores a{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);border:1px solid var(--line);background:var(--bg);
+  border-radius:20px;padding:8px 14px;font-size:13px;font-weight:500;transition:.12s}
+.stores a:hover{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.stores a em{font-style:normal;font-size:10.5px;opacity:.55}
+.stores svg{width:11px;height:11px;opacity:.6}
+.live{margin-top:14px}
+.live[hidden]{display:none}
+.live .tag{display:block;margin-bottom:8px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.strip a{text-decoration:none;color:inherit;display:block}
+.strip .im{aspect-ratio:1161/1625;background:var(--well);border-radius:8px;overflow:hidden}
+.strip img{width:100%;height:100%;object-fit:cover;display:block}
+.strip .nm{font-size:12px;line-height:1.25;margin-top:6px;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.strip .pr{font-size:12px;color:var(--muted)}
+
+.note{margin-top:30px;font-size:12px;color:var(--muted);max-width:640px}
+
+.scrim{position:fixed;inset:0;background:rgba(20,20,18,.5);display:grid;place-items:center;padding:16px;z-index:50}
+.scrim[hidden]{display:none}
+.sheet{background:var(--bg);border-radius:18px;width:min(520px,100%);max-height:92vh;overflow:auto;padding:22px;box-shadow:0 14px 40px rgba(0,0,0,.2)}
+.sheet h2{margin:0 0 4px;font-size:20px;font-weight:500;letter-spacing:-.01em}
+.sheet p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.sheet label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin:14px 0 6px}
+.sheet input[type=password],.sheet input[type=text]{width:100%;border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 13px;font-size:16px;outline:none}
+.sheet input:focus{border-color:var(--ink)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px}
+.checks label{display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:14px;color:var(--ink);font-weight:450;margin:0;cursor:pointer}
+.sheet .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+.sheet a{color:var(--ink)}
+
+.toast{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%) translateY(16px);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:24px;font-size:13px;font-weight:500;opacity:0;transition:.2s;z-index:80;pointer-events:none;max-width:86vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (max-width:560px){
+  .strip{display:flex;overflow-x:auto;gap:10px;margin:0 -16px;padding:0 16px 4px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch}
+  .strip a{flex:0 0 34%;scroll-snap-align:start}
+  .picked img{width:78px;height:104px}
+  .checks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="dot">S</div>
+    <div><h1>Shop the Look</h1><span class="sub">Personal prototype</span></div>
+    <div class="spacer"></div>
+    <button class="ghost" id="openSettings" type="button">Settings</button>
+  </header>
+
+  <section class="hero">
+    <h2>Drop in an outfit.<br>Find the pieces.</h2>
+    <p>Add any photo of a look. The AI picks out each piece and sends you to matching searches across South African stores.</p>
+  </section>
+
+  <label class="drop" id="drop" for="file" tabindex="0">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.7"/><path d="M21 16l-5-5-8 8"/></svg>
+    <span><b>Choose a photo</b>, drag one in, or paste</span>
+    <small>Photos are sent to Google's Gemini through this site's server for reading, and are never stored.</small>
+  </label>
+  <input type="file" id="file" accept="image/*" hidden>
+
+  <section class="picked" id="picked" hidden>
+    <img id="thumb" alt="Your reference photo">
+    <div class="side">
+      <input id="note" type="text" placeholder="Optional note, e.g. same look but cheaper" maxlength="200" autocomplete="off">
+      <div class="row">
+        <button class="btn" id="go" type="button">Find the pieces</button>
+        <button class="btn light" id="swap" type="button">Different photo</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="status" id="status" hidden></p>
+  <div id="out"></div>
+
+  <p class="note">Links open each store's own search in a new tab. Stores marked "via Google" use a site-restricted Google search because their own search address is not reliable to link to.</p>
+</div>
+
+<div class="scrim" id="scrim" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sTitle">
+    <h2 id="sTitle">Settings</h2>
+    <p>Pick which stores show up. Saved in this browser.</p>
+    <label for="code">Access code (only if you set one)</label>
+    <input type="password" id="code" placeholder="Leave blank if you have not set one" autocomplete="off" spellcheck="false">
+    <label>Stores to show</label>
+    <div class="checks" id="checks"></div>
+    <div class="actions">
+      <button class="btn light" id="cancel" type="button">Cancel</button>
+      <button class="btn" id="save" type="button">Save</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- config ---------- */
+/* The AI call happens on the server (api/analyse.js), so no key lives in this page. */
+const API = "/api/analyse";
+
+/* Woolworths public search (same open endpoint the Woolies Stylist tool uses). */
+const CIO = { host:"https://wpkmgeuco-zone.cnstrc.com", key:"key_tw9hKe0fkfgEf36D", version:"ciojs-2.1461.35" };
+
+/* Store list. url(q) builds a direct search link; google:'domain' falls back to a
+   site-restricted Google search (used where the store's own search URL is unverified). */
+const STORES = [
+  { id:"woolies",  name:"Woolworths",      url:q=>`https://www.woolworths.co.za/cat?Ntt=${q}` },
+  { id:"mrp",      name:"Mr Price",        google:"mrp.com" },
+  { id:"bash",     name:"Bash",            google:"bash.com" },
+  { id:"cottonon", name:"Cotton On",       url:q=>`https://cottonon.com/ZA/search/?q=${q}` },
+  { id:"zara",     name:"Zara",            url:q=>`https://www.zara.com/za/en/search?searchTerm=${q}` },
+  { id:"hm",       name:"H&M",             url:q=>`https://www2.hm.com/en_za/search-results.html?q=${q}` },
+  { id:"edgars",   name:"Edgars",          google:"edgars.co.za" },
+  { id:"takealot", name:"Takealot",        url:q=>`https://www.takealot.com/all?qsearch=${q}` },
+  { id:"gshop",    name:"Google Shopping", url:q=>`https://www.google.com/search?tbm=shop&gl=za&q=${q}` }
+];
+const DEFAULT_ON = ["woolies","mrp","bash","cottonon","zara","hm","gshop"];
+
+/* ---------- tiny helpers ---------- */
+const $ = s => document.querySelector(s);
+const mem = {};
+const store = {
+  get(k,d){ try{ const v=localStorage.getItem(k); return v==null?d:v; }catch(e){ return k in mem?mem[k]:d; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
+};
+function el(tag, props, ...kids){
+  const n=document.createElement(tag);
+  if(props) for(const [k,v] of Object.entries(props)){
+    if(k==="class") n.className=v; else if(k==="text") n.textContent=v; else n.setAttribute(k,v);
+  }
+  kids.forEach(c=>c&&n.appendChild(c));
+  return n;
+}
+let toastT;
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("show"),2600); }
+function enabledStores(){
+  let ids; try{ ids=JSON.parse(store.get("sl_stores","null")); }catch(e){ ids=null; }
+  if(!Array.isArray(ids)) ids=DEFAULT_ON;
+  return STORES.filter(s=>ids.includes(s.id));
+}
+function storeLink(s,query){
+  if(s.google) return `https://www.google.com/search?q=${encodeURIComponent("site:"+s.google+" "+query)}`;
+  return s.url(encodeURIComponent(query));
+}
+
+/* ---------- image handling ---------- */
+let imageData = null;
+
+function fileToJpeg(file){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(file);
+    const img=new Image();
+    img.onload=()=>{
+      const max=1280; let w=img.naturalWidth,h=img.naturalHeight;
+      const s=Math.min(1,max/Math.max(w,h)); w=Math.round(w*s); h=Math.round(h*s);
+      const c=document.createElement("canvas"); c.width=w; c.height=h;
+      const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,w,h); x.drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      resolve(c.toDataURL("image/jpeg",0.85));
+    };
+    img.onerror=()=>{ URL.revokeObjectURL(url); reject(new Error("That file could not be read as an image. Try a JPG or PNG.")); };
+    img.src=url;
+  });
+}
+async function takeFile(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type||"")){ toast("That is not an image"); return; }
+  try{
+    imageData = await fileToJpeg(file);
+    $("#thumb").src = imageData;
+    $("#drop").hidden = true;
+    $("#picked").hidden = false;
+    $("#out").innerHTML=""; setStatus("");
+  }catch(e){ toast(e.message); }
+}
+const drop=$("#drop");
+$("#file").addEventListener("change",e=>{ takeFile(e.target.files[0]); e.target.value=""; });
+["dragenter","dragover"].forEach(ev=>document.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.add("drag"); }));
+["dragleave","drop"].forEach(ev=>document.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove("drag"); }));
+document.addEventListener("drop",e=>{ const f=e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]; takeFile(f); });
+document.addEventListener("paste",e=>{
+  const items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(const it of items){ if(it.type&&it.type.startsWith("image/")){ takeFile(it.getAsFile()); break; } }
+});
+drop.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); $("#file").click(); } });
+$("#swap").addEventListener("click",()=>{ $("#file").click(); });
+
+/* ---------- status ---------- */
+function setStatus(msg,kind){
+  const s=$("#status");
+  if(!msg){ s.hidden=true; s.className="status"; s.textContent=""; return; }
+  s.hidden=false; s.className="status"+(kind==="err"?" err":"");
+  s.textContent="";
+  if(kind==="busy"){ const d=el("span",{class:"dots"},el("i"),el("i"),el("i")); s.appendChild(d); }
+  s.appendChild(document.createTextNode(msg));
+}
+
+/* ---------- analyse (via our own server function) ---------- */
+async function analyse(){
+  if(!imageData) return;
+  const note=$("#note").value.trim();
+  const btn=$("#go"); btn.disabled=true;
+  $("#out").innerHTML="";
+  setStatus("Reading the look...","busy");
+  try{
+    let r;
+    try{
+      r=await fetch(API,{method:"POST",
+        headers:{"content-type":"application/json","x-access-code":store.get("sl_code","")},
+        body:JSON.stringify({image:imageData,note})});
+    }catch(e){ throw new Error("Could not reach the server. Check your connection."); }
+    let j={}; try{ j=await r.json(); }catch(e){}
+    if(r.status===401){ openSettings(); throw new Error(j.error||"Access code needed."); }
+    if(!r.ok) throw new Error(j.error||("Something went wrong ("+r.status+")."));
+    const pieces=(Array.isArray(j.pieces)?j.pieces:[]).filter(p=>p&&p.query);
+    if(!pieces.length){ setStatus("No clothing found in that photo. Try a clearer one.","err"); return; }
+    setStatus("");
+    render(String(j.vibe||""),pieces.map(p=>({label:String(p.label||p.query),category:String(p.category||""),query:String(p.query)})));
+  }catch(e){
+    setStatus(e.message||"Something went wrong","err");
+  }finally{ btn.disabled=false; }
+}
+$("#go").addEventListener("click",analyse);
+$("#note").addEventListener("keydown",e=>{ if(e.key==="Enter") analyse(); });
+
+/* ---------- Woolworths live preview ---------- */
+async function wooliesSearch(term){
+  const u=new URL(CIO.host+"/v1/search/"+encodeURIComponent(term));
+  u.searchParams.set("key",CIO.key);
+  u.searchParams.append("filters[visibility]","web and app");
+  u.searchParams.set("num_results_per_page","8");
+  u.searchParams.set("page","1");
+  u.searchParams.set("us","default");
+  u.searchParams.set("i","sl-"+Math.random().toString(36).slice(2));
+  u.searchParams.set("s","1");
+  u.searchParams.set("c",CIO.version);
+  const r=await fetch(u.toString());
+  if(!r.ok) throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  return ((j.response&&j.response.results)||[]).map(p=>{
+    const d=p.data||{};
+    return {name:p.value,price:d.p10||d.price,img:d.image_url||d.imageUrl,url:d.url};
+  }).filter(x=>x.img&&x.url).slice(0,4);
+}
+async function fillLive(box,query){
+  box.hidden=true; box.textContent="";
+  try{
+    const items=await wooliesSearch(query);
+    if(!items.length) return;
+    box.appendChild(el("span",{class:"tag",text:"Live from Woolworths"}));
+    const strip=el("div",{class:"strip"});
+    items.forEach(it=>{
+      const a=el("a",{href:"https://www.woolworths.co.za/"+String(it.url).replace(/^\/+/,""),target:"_blank",rel:"noopener"});
+      const im=el("div",{class:"im"}); const img=el("img",{src:it.img,alt:it.name,loading:"lazy"}); im.appendChild(img);
+      a.appendChild(im);
+      a.appendChild(el("div",{class:"nm",text:it.name}));
+      if(it.price) a.appendChild(el("div",{class:"pr",text:"R"+Number(it.price).toLocaleString("en-ZA")}));
+      strip.appendChild(a);
+    });
+    box.appendChild(strip); box.hidden=false;
+  }catch(e){ /* quietly skip the preview; the links still work */ }
+}
+
+/* ---------- render results ---------- */
+const ARROW='<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2h6v6M10 2L3 9"/></svg>';
+function paintStores(wrap,query){
+  wrap.textContent="";
+  enabledStores().forEach(s=>{
+    const a=el("a",{href:storeLink(s,query),target:"_blank",rel:"noopener noreferrer"});
+    a.appendChild(document.createTextNode(s.name));
+    if(s.google) a.appendChild(el("em",{text:"via Google"}));
+    const ic=document.createElement("span"); ic.innerHTML=ARROW; a.appendChild(ic.firstChild);
+    wrap.appendChild(a);
+  });
+}
+function render(vibe,pieces){
+  const out=$("#out"); out.textContent="";
+  if(vibe){ const v=el("div",{class:"vibe"}); v.appendChild(el("small",{text:"The look"})); v.appendChild(document.createTextNode(vibe)); out.appendChild(v); }
+  pieces.forEach(p=>{
+    const card=el("section",{class:"piece"});
+    const h=el("div",{class:"ph"}); h.appendChild(el("h3",{text:p.label})); if(p.category) h.appendChild(el("span",{class:"tag",text:p.category}));
+    card.appendChild(h);
+    const q=el("div",{class:"q"}); const inp=el("input",{type:"text",value:p.query,"aria-label":"Search phrase for "+p.label,autocomplete:"off"}); q.appendChild(inp);
+    card.appendChild(q);
+    const stores=el("div",{class:"stores"}); card.appendChild(stores);
+    const live=el("div",{class:"live",hidden:""}); card.appendChild(live);
+    const refresh=()=>{ const v=inp.value.trim(); if(!v) return; paintStores(stores,v); };
+    inp.addEventListener("input",refresh);
+    const rerun=()=>{ const v=inp.value.trim(); if(v) fillLive(live,v); };
+    inp.addEventListener("change",rerun);
+    inp.addEventListener("keydown",e=>{ if(e.key==="Enter"){ inp.blur(); } });
+    refresh(); fillLive(live,p.query);
+    out.appendChild(card);
+  });
+  const first=out.firstChild; if(first&&first.scrollIntoView) first.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- settings ---------- */
+function openSettings(){
+  $("#code").value=store.get("sl_code","");
+  const on=new Set(enabledStores().map(s=>s.id));
+  const box=$("#checks"); box.textContent="";
+  STORES.forEach(s=>{
+    const lab=el("label"); const cb=el("input",{type:"checkbox",value:s.id}); cb.checked=on.has(s.id);
+    lab.appendChild(cb); lab.appendChild(document.createTextNode(s.name)); box.appendChild(lab);
+  });
+  $("#scrim").hidden=false;
+  setTimeout(()=>$("#code").focus(),30);
+}
+function closeSettings(){ $("#scrim").hidden=true; }
+$("#openSettings").addEventListener("click",openSettings);
+$("#cancel").addEventListener("click",closeSettings);
+$("#scrim").addEventListener("click",e=>{ if(e.target.id==="scrim") closeSettings(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!$("#scrim").hidden) closeSettings(); });
+$("#save").addEventListener("click",()=>{
+  store.set("sl_code",$("#code").value.trim());
+  const ids=[...document.querySelectorAll("#checks input:checked")].map(i=>i.value);
+  store.set("sl_stores",JSON.stringify(ids.length?ids:DEFAULT_ON));
+  closeSettings(); toast("Saved");
+  document.querySelectorAll(".piece").forEach(p=>{ const i=p.querySelector(".q input"); if(i) i.dispatchEvent(new Event("input")); });
+});
+
+</script>
+</body>
+</html>
